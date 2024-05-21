@@ -10,6 +10,33 @@ class AlcoolGasolina extends StatefulWidget {
 class _AlcoolGasolinaState extends State<AlcoolGasolina> {
   TextEditingController _alcoolController = TextEditingController();
   TextEditingController _gasolinaController = TextEditingController();
+  String _resultado = "";
+  bool _error = false;
+
+  void _calcular() {
+    double precoAlcool = double.tryParse(_alcoolController.text) ?? 0;
+    double precoGasolina = double.tryParse(_gasolinaController.text) ?? 0;
+
+    if (precoAlcool == 0 || precoGasolina == 0) {
+      setState(() {
+        _error = true;
+        _resultado =
+            "Informe um valor válido maior que zero e use (.) ao invés de (,).";
+      });
+    } else {
+      if (precoAlcool / precoGasolina > 0.7) {
+        setState(() {
+          _error = false;
+          _resultado = "Melhor abastecer com Gasolina.";
+        });
+      } else {
+        setState(() {
+          _error = false;
+          _resultado = "Melhor abastecer com Álcool.";
+        });
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +88,9 @@ class _AlcoolGasolinaState extends State<AlcoolGasolina> {
                 child: SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      _calcular();
+                    },
                     child: Text(
                       "Calcular",
                       style: TextStyle(
@@ -79,8 +108,13 @@ class _AlcoolGasolinaState extends State<AlcoolGasolina> {
               Padding(
                   padding: EdgeInsets.only(top: 20),
                   child: Text(
-                    "Resultado",
-                    style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                    _resultado,
+                    style: (_error)
+                        ? TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                            color: Colors.red)
+                        : TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
                   )),
             ],
           ),
